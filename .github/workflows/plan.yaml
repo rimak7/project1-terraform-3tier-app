@@ -1,0 +1,48 @@
+name: Terraform Plan
+on:
+  push:
+    branches:
+      - main
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4 
+      # ---------------------------
+      # Configure AWS via OIDC
+      # ---------------------------
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{secrets.AWS_ROLE_ARN}}
+          aws-region: ${{secrets.AWS_REGION}}
+# ---------------------------
+      # Setup Terraform
+      # ---------------------------
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: Terraform Init
+        run: terraform init
+      - name: Terraform Validate
+        run: terraform validate
+      # ---------------------------
+      # Terraform Plan
+      # ---------------------------
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+      # NEW STEP: Convert binary plan to human-readable text
+      - name: Create Readable Plan Preview
+        run: terraform show -no-color tfplan > plan_preview.txt
+      # Upload both the binary (for the machine) and text (for you)
+      - name: Upload Plan Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan
+          path: |
+            ./tfplan
+            ./plan_preview.txt
+          retention-days: 5
