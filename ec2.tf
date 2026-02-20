@@ -2,30 +2,30 @@
 resource "aws_instance" "bastion" {
   ami                         = data.aws_ami.amazon.id
   instance_type               = "t2.micro"
-  subnet_id                   = aws_subnet.my_public_subnet1.id
+  # FIXED: Matches the key name in your loop
+  subnet_id                   = aws_subnet.pub["1a"].id 
   vpc_security_group_ids      = [aws_security_group.bastion_sg.id]
-  key_name                    = aws_key_pair.utc_key.key_name
+  key_name                    = aws_key_pair.utc_key_pair.key_name
   associate_public_ip_address = true
   
+  # CRITICAL: Ensures the .pem file is created on the runner BEFORE provisioners run
+  depends_on = [local_file.utc_pem]
+
   user_data = file("user.sh")
 
-  # Connection block for provisioners
   connection {
     type        = "ssh"
     user        = "ec2-user"
     private_key = tls_private_key.utc_key.private_key_pem
     host        = self.public_ip
-
+    timeout     = "2m" # Gives the instance time to boot
   }
 
-  # Provisioner to copy the key to the Bastion
- provisioner "file" {
-    source      = "./utc-key.pem" # Ensure this matches your local_file filename
+  provisioner "file" {
+    source      = "./utc-key.pem"
     destination = "/home/ec2-user/utc-key.pem"
   }
 
-
-  # Provisioner to set permissions to 400
   provisioner "remote-exec" {
     inline = [
       "chmod 400 /home/ec2-user/utc-key.pem"
@@ -39,13 +39,14 @@ resource "aws_instance" "bastion" {
   }
 }
 
-# 2. Private Server (Private Subnet - No Direct SSH)
+# 2. Private Server (Private Subnet)
 resource "aws_instance" "private_server" {
   ami                    = data.aws_ami.amazon.id
   instance_type          = "t3.micro"
-  subnet_id              = aws_subnet.my_private_subnet1.id
+  # FIXED: Pointing to your private subnet map
+  subnet_id              = aws_subnet.priv["1a"].id 
   vpc_security_group_ids = [aws_security_group.app_sg.id]
-  key_name               = aws_key_pair.utc_key.key_name
+  key_name               = aws_key_pair.utc_key_pair.key_name
 
   tags = {
     Name = "private-app-server"
@@ -53,12 +54,12 @@ resource "aws_instance" "private_server" {
     team = "config management"
   }
 }
+
 data "aws_ami" "amazon" {
   most_recent = true
   owners      = ["amazon"]
-    filter {
-        name   = "name"
-        values = ["amzn2-ami-hvm-*-x86_64-gp2"]
-    }
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
 }
-
