@@ -106,7 +106,7 @@ resource "aws_eip" "my_nat_eip3" {
 
 resource "aws_nat_gateway" "my_nat_subnet1" {
   subnet_id     = aws_subnet.my_public_subnet1.id
-  allocation_id = aws_eip.my_nat_eip.id
+  allocation_id = aws_eip.my_nat_eip1.id
   tags = {
     Name = "my_nat_subnet1"
   }
@@ -114,7 +114,7 @@ resource "aws_nat_gateway" "my_nat_subnet1" {
 
 resource "aws_nat_gateway" "my_nat_subnet2" {
   subnet_id     = aws_subnet.my_public_subnet2.id
-  allocation_id = aws_eip.my_nat_eip.id
+  allocation_id = aws_eip.my_nat_eip2.id
   tags = {
     Name = "my_nat_subnet2"
   }
@@ -122,7 +122,7 @@ resource "aws_nat_gateway" "my_nat_subnet2" {
 
 resource "aws_nat_gateway" "my_nat_subnet3" {
   subnet_id     = aws_subnet.my_public_subnet3.id
-  allocation_id = aws_eip.my_nat_eip.id
+  allocation_id = aws_eip.my_nat_eip3.id
   tags = {
     Name = "my_nat_subnet3"
   }
