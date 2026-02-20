@@ -6,6 +6,7 @@ resource "aws_instance" "bastion" {
   vpc_security_group_ids      = [aws_security_group.bastion_sg.id]
   key_name                    = aws_key_pair.utc_key.key_name
   associate_public_ip_address = true
+  user_data = file("user.sh")
 
   # Connection block for provisioners
   connection {
