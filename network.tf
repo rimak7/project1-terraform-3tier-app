@@ -100,7 +100,6 @@ resource "aws_eip" "my_nat_eip" {
 # Nat gateway subnet
 
 resource "aws_nat_gateway" "my_nat_subnet1" {
-  vpc_id        = aws_vpc.my_vpc.id
   subnet_id     = aws_subnet.my_public_subnet1.id
   allocation_id = aws_eip.my_nat_eip.id
   tags = {
@@ -109,7 +108,6 @@ resource "aws_nat_gateway" "my_nat_subnet1" {
 }
 
 resource "aws_nat_gateway" "my_nat_subnet2" {
-  vpc_id        = aws_vpc.my_vpc.id
   subnet_id     = aws_subnet.my_public_subnet2.id
   allocation_id = aws_eip.my_nat_eip.id
   tags = {
@@ -118,7 +116,6 @@ resource "aws_nat_gateway" "my_nat_subnet2" {
 }
 
 resource "aws_nat_gateway" "my_nat_subnet3" {
-  vpc_id        = aws_vpc.my_vpc.id
   subnet_id     = aws_subnet.my_public_subnet3.id
   allocation_id = aws_eip.my_nat_eip.id
   tags = {

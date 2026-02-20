@@ -10,7 +10,7 @@ resource "aws_instance" "bastion" {
   # Connection block for provisioners
   connection {
     type        = "ssh"
-    user        = "amazon-user"
+    user        = "ec2-user"
     private_key = tls_private_key.utc_key.private_key_pem
     host        = self.public_ip
   }
