@@ -13,12 +13,14 @@ resource "aws_instance" "bastion" {
     user        = "ec2-user"
     private_key = tls_private_key.utc_key.private_key_pem
     host        = self.public_ip
+
   }
 
   # Provisioner to copy the key to the Bastion
   provisioner "file" {
     source      = "./utc-key.pem"
     destination = "/home/amazon/utc-key.pem"
+
   }
 
   # Provisioner to set permissions to 400
