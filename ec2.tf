@@ -49,4 +49,12 @@ resource "aws_instance" "private_server" {
     team = "config management"
   }
 }
+data "aws_ami" "amazon" {
+  most_recent = true
+  owners      = ["amazon"]
+    filter {
+        name   = "name"
+        values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+    }
+}
 
