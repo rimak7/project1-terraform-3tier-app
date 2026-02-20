@@ -94,9 +94,14 @@ resource "aws_subnet" "my_public_subnet3" {
 }
 
 #create EIP for nat gateway
-resource "aws_eip" "my_nat_eip" {
+resource "aws_eip" "my_nat_eip1" {
 }
+resource "aws_eip" "my_nat_eip2" {
 
+}
+resource "aws_eip" "my_nat_eip3" {
+  
+}
 # Nat gateway subnet
 
 resource "aws_nat_gateway" "my_nat_subnet1" {
